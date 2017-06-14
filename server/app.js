@@ -84,7 +84,7 @@ app.post('/login',
     if (err) {
       res.sendStatus(404);
     } else {
-      result ? res.redirect('/') : res.render('login'); 
+      result ? res.redirect('/') : res.redirect('/login'); 
     }
   });
 });
