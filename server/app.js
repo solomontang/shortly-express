@@ -19,16 +19,26 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', 
 (req, res) => {
-  res.render('index');
+  // res.render('index'); //DEFAULT
+
+  //check if logged in
+    //render ('index');
+  //else 
+    //render signup
+  res.render('index'); //I ADDED THIS
 });
 
 app.get('/create', 
 (req, res) => {
+  console.log('inside app get /create');
+
   res.render('index');
 });
 
 app.get('/links', 
 (req, res, next) => {
+  console.log('inside app get /links');
+  
   models.Links.getAll()
     .then(links => {
       res.status(200).send(links);
@@ -38,8 +48,56 @@ app.get('/links',
     });
 });
 
+app.get('/signup',
+(req, res, next) => {
+  res.render('signup');
+});
+
+app.post('/signup',
+(req, res, next) => {
+  console.log('submit sign up');
+  console.log(req.body);
+  
+  models.Users.create(req.body);
+  //need function to send login information to db
+  //redirect to home page '/'
+  // res.render('index');
+  // res.status(201).send(index);
+  res.redirect('/');
+});
+
+app.get('/login',
+(req, res, next) => {
+
+  res.render('login');
+});
+
+app.post('/login',
+(req, res, next) => {
+  
+  models.Users.get({username: req.body.username})
+  .then( function(result) {
+    // console.log(result);
+    if (models.Users.compare(req.body.password, result.password, result.salt)) {
+      res.redirect('/');
+      //get() from db row associated with username
+    } else {
+      res.render('login');
+    }
+  });
+    //get salt and pw from db according to username
+  //parse query result for hash and salt
+  //if USERS.compare(attempted, hash, salt)
+    //render home
+  //else 
+    //render login
+
+  // res.render('login');
+});
+
 app.post('/links', 
 (req, res, next) => {
+  console.log('inside app post /links');
   var url = req.body.url;
   if (!models.Links.isValidUrl(url)) {
     // send back a 404 if link is not valid
@@ -87,7 +145,7 @@ app.post('/links',
 /************************************************************/
 
 app.get('/:code', (req, res, next) => {
-
+  console.log('still short');
   return models.Links.get({ code: req.params.code })
     .tap(link => {
 
