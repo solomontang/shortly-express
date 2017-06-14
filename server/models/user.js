@@ -19,7 +19,7 @@ class Users extends Model {
       salt,
       password: utils.createHash(password, salt)
     };
-
+    
     return super.create.call(this, newUser);
   }
   
@@ -27,10 +27,7 @@ class Users extends Model {
 
     super.get({username: user.username})
     .then ( (result) => {
-      console.log(result);
-      if (this.compare(user.password, result.password, result.salt)) {
-        callback(null, result);
-      }
+      callback(null, this.compare(user.password, result.password, result.salt));
     })
     .catch ( (err) => {
       console.log(err);

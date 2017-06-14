@@ -55,15 +55,20 @@ app.get('/signup',
 
 app.post('/signup',
 (req, res, next) => {
-  console.log('submit sign up');
-  console.log(req.body);
   
-  models.Users.create(req.body);
+  models.Users.get({username: req.body.username})
+  .then( (result) => {
+    if (result) {
+      res.redirect('/signup');
+    } else {
+      models.Users.create(req.body);
+      res.redirect('/');
+    }
+  });
   //need function to send login information to db
   //redirect to home page '/'
   // res.render('index');
   // res.status(201).send(index);
-  res.redirect('/');
 });
 
 app.get('/login',
