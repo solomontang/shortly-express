@@ -22,6 +22,23 @@ class Users extends Model {
 
     return super.create.call(this, newUser);
   }
+  
+  authenticate(user, callback) {
+
+    super.get({username: user.username})
+    .then ( (result) => {
+      console.log(result);
+      if (this.compare(user.password, result.password, result.salt)) {
+        callback(null, result);
+      }
+    })
+    .catch ( (err) => {
+      console.log(err);
+      callback(err, null);
+    });
+
+  }
+
 }
 
 module.exports = new Users();

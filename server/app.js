@@ -75,24 +75,13 @@ app.get('/login',
 app.post('/login',
 (req, res, next) => {
   
-  models.Users.get({username: req.body.username})
-  .then( function(result) {
-    // console.log(result);
-    if (models.Users.compare(req.body.password, result.password, result.salt)) {
-      res.redirect('/');
-      //get() from db row associated with username
+  models.Users.authenticate(req.body, (err, result) => {
+    if (err) {
+      res.sendStatus(404);
     } else {
-      res.render('login');
+      result ? res.redirect('/') : res.render('login'); 
     }
   });
-    //get salt and pw from db according to username
-  //parse query result for hash and salt
-  //if USERS.compare(attempted, hash, salt)
-    //render home
-  //else 
-    //render login
-
-  // res.render('login');
 });
 
 app.post('/links', 
