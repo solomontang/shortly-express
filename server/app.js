@@ -25,6 +25,7 @@ app.get('/',
     //render ('index');
   //else 
     //render signup
+  
   res.render('index'); //I ADDED THIS
 });
 
