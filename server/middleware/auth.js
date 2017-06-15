@@ -2,22 +2,33 @@ const models = require('../models');
 const Promise = require('bluebird');
 
 module.exports.createSession = (req, res, next) => {
-  // console.log('calling createSession');
-  models.Sessions.create(Date.now())
-  .then( (status) => {
-    return models.Sessions.get({'id': status.insertId})
-    .then( (session) => {
-      // req.param('session', {'hash': session.hash})
-      req.session = {'hash': session.hash};
-      res.cookies = {'shortlyid': {'value': session.hash}};
-      next();
-    });
-  })
-  .catch( (err) => {
-    console.log('Error creating session ', err);
-  });
-
   
+  console.log('create session ', req.cookies);
+  //check for user-agent
+  //if mismatch
+    //delete record
+  //else 
+    //do rest of this
+  if (!Object.keys(req.cookies).length ) {
+    models.Sessions.create(Date.now())
+    .then( (status) => {
+      return models.Sessions.get({'id': status.insertId})
+      .then( (session) => {
+        // req.param('session', {'hash': session.hash})
+        req.session = {'hash': session.hash};
+        res.cookies = {'shortlyid': {'value': session.hash}};
+        next();
+      });
+    })
+    .catch( (err) => {
+      console.log('Error creating session ', err);
+    });
+  } else {
+    //we havea  cookie but check it if it matches sessions on the db
+      //if doesn't match 
+    req.session = {'hash': req.cookies.shortlyid};
+    next();
+  }
 };
 
 /************************************************************/
