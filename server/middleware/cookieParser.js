@@ -1,4 +1,4 @@
-const parseCookies = (req, res, next) => {
+module.exports.parseCookies = (req, res, next) => {
   let cookies = {};
   if (req.headers.cookie) {
     req.headers.cookie.split('; ').forEach( cookie => { 
@@ -10,4 +10,3 @@ const parseCookies = (req, res, next) => {
   next();
 };
 
-module.exports = parseCookies;

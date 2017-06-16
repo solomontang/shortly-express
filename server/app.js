@@ -4,6 +4,7 @@ const utils = require('./lib/hashUtils');
 const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
+const Cookies = require('./middleware/cookieParser');
 const models = require('./models');
 
 const app = express();
@@ -14,19 +15,13 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(Cookies.parseCookies);
+app.use(Auth.createSession);
 
 
-
-app.get('/', 
-(req, res) => {
-  // res.render('index'); //DEFAULT
-
-  //check if logged in
-    //render ('index');
-  //else 
-    //render signup
-  
-  res.render('index'); //I ADDED THIS
+app.get('/', Auth.verify,
+(req, res) => {  
+  res.redirect('/'); 
 });
 
 app.get('/create', 
@@ -88,6 +83,10 @@ app.post('/login',
       result ? res.redirect('/') : res.redirect('/login'); 
     }
   });
+});
+
+app.get('/logout', Auth.destroySession, (req, res) => {
+  res.redirect('/login');
 });
 
 app.post('/links', 
