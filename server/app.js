@@ -21,17 +21,17 @@ app.use(Auth.createSession);
 
 app.get('/', Auth.verify,
 (req, res) => {  
-  res.redirect('/'); 
+  res.render('index'); 
 });
 
-app.get('/create', 
+app.get('/create', Auth.verify,
 (req, res) => {
   console.log('inside app get /create');
 
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links', Auth.verify,
 (req, res, next) => {
   console.log('inside app get /links');
   
@@ -89,9 +89,8 @@ app.get('/logout', Auth.destroySession, (req, res) => {
   res.redirect('/login');
 });
 
-app.post('/links', 
+app.post('/links', Auth.verify,
 (req, res, next) => {
-  console.log('inside app post /links');
   var url = req.body.url;
   if (!models.Links.isValidUrl(url)) {
     // send back a 404 if link is not valid
@@ -139,7 +138,6 @@ app.post('/links',
 /************************************************************/
 
 app.get('/:code', (req, res, next) => {
-  console.log('still short');
   return models.Links.get({ code: req.params.code })
     .tap(link => {
 

@@ -3,7 +3,6 @@ const Promise = require('bluebird');
 
 
 module.exports.createSession = (req, res, next) => {
-  console.log('creating a new session, maybe');
   let agent = req.get('User-Agent');
 
   Promise.resolve(req.cookies.shortlyid)
@@ -51,7 +50,25 @@ module.exports.destroySession = (req, res, next) => {
 };
 
 
-module.exports.verify = (req,res, next) => {
+module.exports.verify = (req, res, next) => {
   let agent = req.get('User-Agent');
-  //DONT FORGET NEXT
-}
+  //use user-agent in the hash
+  models.Sessions.get({'hash': req.cookies.shortlyid})
+  .then( (session) => {
+    if (!session) {
+      res.redirect('/login');
+    } else {
+      next();
+    }
+  })
+  .error ( (err) => {
+    console.log('Error in user verification: ', err);
+  });
+};
+
+
+
+
+
+
+
